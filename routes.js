@@ -1,6 +1,7 @@
 module.exports = function(app, passport, db, unsplash) {
 // picture routes
-  app.get('/api/pictures', isLoggedIn, db.getAllPictures);
+  app.get('/api/curated', isLoggedIn, unsplash.getCuratedPictures);
+  app.get('/api/pictures', isLoggedIn, unsplash.searchPictures);
   app.get('/api/pictures/:id', isLoggedIn, db.getSinglePicture);
   app.post('/api/pictures', isLoggedIn, db.createPicture);
   app.put('/api/pictures/:id', isLoggedIn, db.updatePicture);
@@ -11,8 +12,8 @@ module.exports = function(app, passport, db, unsplash) {
       unsplash.getBearerToken(req.query.code, req.user.id);
       // unsplash.searchPictures("apple", req.user.token);
     }
-    res.render('sloogle.ejs');
-
+    // res.render('sloogle.ejs');
+    res.sendFile(__dirname + '/public/views/sloogle.html');
   });
 	// show the home page (will also have our login links)
   app.get('/', function(req, res){

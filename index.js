@@ -24,9 +24,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
+// allow serving of static files (ie in public)
+app.use('/public', express.static(__dirname + '/public'));
+
 // set view engine to allow embedded JS and change the default directory from ./views to ./public/views
 app.set('view engine', 'ejs');
-app.set('views', __dirname + '/public/views')
+app.set('views', __dirname + '/public/views');
+
 
 // var router = express.Router();
 
@@ -37,7 +41,7 @@ app.set('views', __dirname + '/public/views')
 
 
 // routes
-require('./routes/routes')(app, passport, db, unsplash);
+require('./routes')(app, passport, db, unsplash);
 
 
 // start the server

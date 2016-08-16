@@ -24,16 +24,56 @@ function getBearerToken(code, userId) {
   });
 }
 
-function getAllPictures(string, bearerToken) {
-  var search = "apple";
-
-  request.get("https://api.unsplash.com/photos/search?client_id="+ unsplashCred.applicationId + "&page=1&query=" + search + "&Authorization=" + bearerToken, function (error, response, body) {
+function searchPictures(req, res, next) {
+  request.get("https://api.unsplash.com/photos/search?client_id="+ unsplashCred.applicationId + "&page=1&query=" + "apple" + "&Authorization=" + req.user.token, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log(body);
+      res.json({
+        status: 'success',
+        data: body,
+        message: 'retrieved searched pictures'
+      });
+    } else {
+      console.log("request to unsplash.getAllPictures failed!");
     }
-    else {
-      console.log("error is " + error);
-      console.log("response is " + JSON.stringify(response));
+  });
+}
+
+function getCuratedPictures(req, res, next) {
+  request.get("https://api.unsplash.com/photos/curated?client_id="+ unsplashCred.applicationId + "&page=1&Authorization=" + req.user.token, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      res.json({
+        status: 'success',
+        data: body,
+        message: 'retrieved curated pictures'
+      });
+    } else {
+      console.log("request to unsplash.getCuratedPictures failed!");
+    }
+  });
+}
+
+function likePicture(req, res, next) {
+  request.post("https://api.unsplash.com/photos/"+req.query.id+"/like?client_id="+ unsplashCred.applicationId + "&Authorization=" + req.user.token, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      res.json({
+        status: 'success',
+        message: 'you liked a picture!'
+      });
+    } else {
+      console.log("request to unsplash.likePicture failed!");
+    }
+  });
+}
+
+function unLikePicture(req, res, next) {
+  request.delete("https://api.unsplash.com/photos/"+req.query.id+"/like?client_id="+ unsplashCred.applicationId + "&Authorization=" + req.user.token, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      res.json({
+        status: 'success',
+        message: 'you unliked a picture!'
+      });
+    } else {
+      console.log("request to unsplash.unLikePicture failed!");
     }
   });
 }
@@ -41,5 +81,9 @@ function getAllPictures(string, bearerToken) {
 
 module.exports = {
   getBearerToken: getBearerToken,
-  getAllPictures: getAllPictures
+  searchPictures: searchPictures,
+  getCuratedPictures: getCuratedPictures,
+  likePicture: likePicture,
+  unLikePicture: unLikePicture
+
 }
