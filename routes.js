@@ -2,15 +2,16 @@ module.exports = function(app, passport, db, unsplash) {
 // picture routes
   app.get('/api/curated', isLoggedIn, unsplash.getCuratedPictures);
   app.get('/api/pictures', isLoggedIn, unsplash.searchPictures);
-  app.get('/api/pictures/:id', isLoggedIn, db.getSinglePicture);
-  app.post('/api/pictures', isLoggedIn, db.createPicture);
-  app.put('/api/pictures/:id', isLoggedIn, db.updatePicture);
-  app.delete('/api/pictures/:id', isLoggedIn, db.removePicture);
+  app.get('/api/pictures/like', isLoggedIn, unsplash.likePicture);
+  app.get('/api/pictures/unlike', isLoggedIn, unsplash.unLikePicture);
+  app.get('/api/liked', isLoggedIn, unsplash.getLikedPictures);
+  // app.post('/api/pictures', isLoggedIn, db.createPicture);
+  // app.put('/api/pictures/:id', isLoggedIn, db.updatePicture);
+  // app.delete('/api/pictures/:id', isLoggedIn, db.removePicture);
 // normal routes ===============================================================
   app.get('/sloogle', isLoggedIn, function(req, res) {
     if (req.query.code) {
       unsplash.getBearerToken(req.query.code, req.user.id);
-      // unsplash.searchPictures("apple", req.user.token);
     }
     // res.render('sloogle.ejs');
     res.sendFile(__dirname + '/public/views/sloogle.html');

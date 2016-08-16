@@ -14,7 +14,8 @@ CREATE TABLE users (
   ID SERIAL PRIMARY KEY,
   email VARCHAR,
   password VARCHAR,
-  token VARCHAR
+  token VARCHAR,
+  username VARCHAR
 );
 
 INSERT INTO pics (name, description, img)
