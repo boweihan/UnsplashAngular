@@ -4,13 +4,13 @@ var passport = require('passport');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var db = require('./models/pic/pictures');
+var db = require('./models/deprecated/picture');
 var app = express();
 var flash = require('connect-flash');
-var unsplash = require('./models/user/unsplash');
+var unsplash = require('./models/picture');
 
 // passport configuration file (fuck yeah, modularity!)
-require('./models/user/passport')(passport); // pass passport for configuration
+require('./models/user')(passport); // pass passport for configuration
 
 // we need this to be an app
 app.use(cookieParser());
