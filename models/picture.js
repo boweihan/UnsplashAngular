@@ -36,8 +36,8 @@ function getBearerToken(code, userId) {
   request.post("https://unsplash.com/oauth/token?client_id=" + unsplashCred.applicationId + "&client_secret=" + unsplashCred.secret + "&redirect_uri=" + unsplashCred.callbackUrl + "&code=" + code + "&grant_type=authorization_code", function (error, response, body) {
     db.none('UPDATE users SET token=$1 WHERE id=$2', [(JSON.parse(response.body)).access_token, userId])
       .then(function () {
-        console.log(JSON.parse(response.body));
-        console.log('token:' + JSON.parse(response.body).access_token + ', added to user: ' + userId);
+        // console.log(JSON.parse(response.body));
+        // console.log('token:' + JSON.parse(response.body).access_token + ', added to user: ' + userId);
         getUserName((JSON.parse(response.body).access_token), userId);
       })
   });
