@@ -8,7 +8,7 @@ CREATE TABLE pics (
   name VARCHAR,
   description VARCHAR,
   img VARCHAR,
-  user_id VARCHAR
+  user_id INTEGER
 );
 
 CREATE TABLE users (
@@ -20,7 +20,7 @@ CREATE TABLE users (
 );
 
 INSERT INTO pics (name, description, img, user_id)
-  VALUES ('TestPicture1', 'description for p1', 'n/a', '1');
+  VALUES ('TestPicture1', 'description for p1', 'n/a', 1);
 
 INSERT INTO users (email, password)
   VALUES ('test@test.com', 'test');

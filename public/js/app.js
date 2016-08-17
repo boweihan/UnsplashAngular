@@ -111,6 +111,14 @@ App.controller("ListController", function(pictures, $scope) {
       })
   }
 
+  $scope.showFavorites = function() {
+    pictures.showFavoritedPictures()
+      .then(function(pictures) {
+        $scope.pics = JSON.parse(pictures);
+        $scope.title = "Showing: Favorites"
+      })
+  }
+
   // call favorite picture on link click
 
   // call like picture on link click

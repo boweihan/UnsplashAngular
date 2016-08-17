@@ -120,6 +120,7 @@ function favoritePicture(req, res, next) {
 }
 
 function showFavoritedPictures(req, res, next) {
+  console.log('showing favorited pictures');
   db.any('select * from pics where user_id='+req.user.id)
     .then(function (data) {
       res.status(200)
