@@ -33,6 +33,4 @@ app.set('views', __dirname + '/public/views');
 require('./routes')(app, passport, db, unsplash);
 
 // start the server
-app.listen(8080, function() {
-  console.log("Sick, the node server is running! (localhost:8080)")
-})
+app.listen(process.env.PORT || 8080)
