@@ -10,7 +10,7 @@ var options = {
 
 // postgres information
 var pgp = require('pg-promise')(options);
-var connectionString = 'postgres://bowei:test@localhost:5432/pictures';
+var connectionString = 'postgres://oeupplkqmvjyik:j-USwIR_qmpHvvctYfiLigVkao@ec2-54-221-226-148.compute-1.amazonaws.com:5432/d1ab48uu38khao';
 var db = pgp(connectionString);
 
 // api keys
