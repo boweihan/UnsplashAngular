@@ -111,6 +111,7 @@ App.controller("ListController", function(pictures, $scope) {
       })
   }
 
+  // call favorite picture on link click
   $scope.showFavorites = function() {
     pictures.showFavoritedPictures()
       .then(function(pictures) {
@@ -119,16 +120,13 @@ App.controller("ListController", function(pictures, $scope) {
       })
   }
 
+  // call like picture on link click
   $scope.favorite = function(url) {
     pictures.favoritePicture(url)
       .then(function(pictures) {
         $scope.title = $scope.title + "thanks for favoriting a picture"
       })
   }
-
-  // call favorite picture on link click
-
-  // call like picture on link click
 
   // call unlike picture on link click
 

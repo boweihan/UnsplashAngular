@@ -1,3 +1,6 @@
+// THIS FILE IS DEPRECATED AND NO LONGER IN USE FOR THE APP
+// It provided base CRUD functionality for picture manipulation
+
 var promise = require('bluebird');
 var options = {
   // overrode pg-promise promise library with bluebird
@@ -7,7 +10,7 @@ var pgp = require('pg-promise')(options);
 var connectionString = 'postgres://bowei:test@localhost:5432/pictures';
 var db = pgp(connectionString);
 
-// add query functions
+// get all pictures
 function getAllPictures(req, res, next) {
   db.any('select * from pics')
     .then(function (data) {
@@ -23,6 +26,7 @@ function getAllPictures(req, res, next) {
     });
 }
 
+// get single picture
 function getSinglePicture(req, res, next) {
   var picID = parseInt(req.params.id);
   db.one('select * from pics where id = $1', picID)
@@ -39,6 +43,7 @@ function getSinglePicture(req, res, next) {
     });
 }
 
+// create a new picture in the database
 function createPicture(req, res, next) {
   db.none('insert into pics(name, description, img)' + 'values(${name}, ${description}, ${img}', req.body)
     .then(function () {
@@ -53,6 +58,7 @@ function createPicture(req, res, next) {
     });
 }
 
+// update a picture in the database
 function updatePicture(req, res, next) {
   db.none('update pics set name=$1, description=$2, img=$3 where id=$4', [req.body.name, req.body.description, req.body.img, parseInt(req.body.id)])
     .then(function () {
@@ -67,6 +73,7 @@ function updatePicture(req, res, next) {
     });
 }
 
+// destroy a picture
 function removePicture(req, res, next) {
   var picID = parseInt(req.params.id);
   db.result('delete from pics where id=$1', picID)
@@ -81,9 +88,6 @@ function removePicture(req, res, next) {
       return next(err);
     });
 }
-
-
-
 
 module.exports = {
   getAllPictures: getAllPictures,
