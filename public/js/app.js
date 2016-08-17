@@ -1,131 +1,147 @@
-var unsplashCred = {
-  applicationId: "78cd46cc136d378fcd53b6f3a7754591387e38d78dccfa52bf3563999447df99",
-  secret: "0aa60887488aa8264bb73f0b75a5f0a41cc3cd28da67ed36e15363f7047b6f76",
-  bearer: "",
-  callbackUrl: "http://localhost:8080/sloogle"
-}
+// initialize root module with routeProvider
+var App = angular.module('root', ['ngRoute']);
 
-console.log('hello');
-
-angular.module("root", ['ngRoute'])
-    .config(function($routeProvider) {
-        $routeProvider
-            .when("/sloogle", {
-                templateUrl: "list.html",
-                controller: "ListController",
-                resolve: {
-                    pictures: function(Pictures) {
-                        return Pictures.getPictures();
-                    }
-                }
-            })
-            // .when("/new/contact", {
-            //     controller: "NewContactController",
-            //     templateUrl: "contact-form.html"
-            // })
-            // .when("/contact/:contactId", {
-            //     controller: "EditContactController",
-            //     templateUrl: "contact.html"
-            // })
-            // .otherwise({
-            //     redirectTo: "/"
-            // })
+// provide angular routes, for this app we'll just use the one /sloogle
+App.config(function($routeProvider) {
+  $routeProvider
+    .when('/sloogle', {
+          templateUrl: "/public/views/list.html",
+          controller: "ListController",
     })
-    // fetch information from api
-    .service("Pictures", function($http) {
-        this.getPictures = function() {
-          // console.log('hello1');
-          return $http.get("/api/pictures").
-              then(function(response) {
-                console.log(response);
-                console.log('hello');
-                  return response;
-              }, function(response) {
-                  alert("Error finding Pictures.");
-              });
+    .otherwise({
+      redirectTo: '/sloogle'
+    })
+});
+
+// define factory methods, used a factory instead of a service here because we don't need constructors, factories only INVOKE while services call new on the function, these are both singletons
+App.factory('pictures', ['$http', function($http) {
+  return {
+    getPictures: function() {
+      return $http.get("/api/curated")
+        .then(
+          function(response) {
+            return response.data.data;
+          },
+          function(errResponse) {
+            console.log("error while fetching all pictures from app.js");
+          }
+        )
+    },
+    searchPictures: function(searchString) {
+      return $http.get("/api/pictures?search="+searchString)
+        .then(
+          function(response) {
+            return response.data.data;
+          },
+          function(errResponse) {
+            console.log("error while fetching searched pictures from app.js");
+          }
+        )
+    },
+    likePicture: function(id) {
+      return $http.get("/api/pictures/like?id="+id)
+        .then(
+          function(response) {
+            return 'liked';
+          },
+          function(errResponse) {
+            console.log("error while liking image from app.js");
+          }
+        )
+    },
+    unLikePicture: function(id) {
+      return $http.get("/api/pictures/unlike?id="+id)
+        .then(
+          function(response) {
+            return 'unliked';
+          },
+          function(errResponse) {
+            console.log("error while unliking image from app.js");
+          }
+        )
+    },
+    favoritePicture: function(url) {
+      return $http.get("/api/pictures/favorite?image="+url)
+        .then(
+          function(response) {
+            return 'favorited';
+          },
+          function(errResponse) {
+            console.log("error while favoriting image from app.js")
+          }
+        )
+    },
+    showFavoritedPictures: function() {
+      return $http.get("/api/favorited")
+        .then(
+          function(response) {
+            return response.data.data
+          },
+          function(errResponse) {
+            console.log("error while showing favorite pictures from app.js")
+          }
+        )
+    }
+  }
+}]);
+
+App.controller("ListController", function(pictures, $scope) {
+  // set initial scopes
+  $scope.search = "";
+  $scope.title = "Curated Pictures";
+
+  // get all pictures on page load
+  pictures.getPictures()
+    .then(function(pictures) {
+      pics = JSON.parse(pictures);
+      for(i=0;i<pics.length;i++) {
+        if (pics[i] === undefined) {
+          pictures.splice(i, 1);
         }
-        // this.createContact = function(contact) {
-        //     return $http.post("/Pictures", contact).
-        //         then(function(response) {
-        //             return response;
-        //         }, function(response) {
-        //             alert("Error creating contact.");
-        //         });
-        // }
-        // this.getContact = function(contactId) {
-        //     var url = "/Pictures/" + contactId;
-        //     return $http.get(url).
-        //         then(function(response) {
-        //             return response;
-        //         }, function(response) {
-        //             alert("Error finding this contact.");
-        //         });
-        // }
-        // this.editContact = function(contact) {
-        //     var url = "/Pictures/" + contact._id;
-        //     console.log(contact._id);
-        //     return $http.put(url, contact).
-        //         then(function(response) {
-        //             return response;
-        //         }, function(response) {
-        //             alert("Error editing this contact.");
-        //             console.log(response);
-        //         });
-        // }
-        // this.deleteContact = function(contactId) {
-        //     var url = "/Pictures/" + contactId;
-        //     return $http.delete(url).
-        //         then(function(response) {
-        //             return response;
-        //         }, function(response) {
-        //             alert("Error deleting this contact.");
-        //             console.log(response);
-        //         });
-        // }
+      }
+      $scope.pics = pics
     })
-    // pass the data to the angular js view
-    .controller("ListController", function(pictures, $scope) {
-        console.log('hellooooo');
-        $scope.pictures = pictures.data;
+
+  // call updateSearch on enter keypress to call searchPictures in factory 'pictures'
+  $scope.updateSearch = function() {
+    pictures.searchPictures($scope.search)
+      .then(function(pictures) {
+        $scope.pics = JSON.parse(pictures);
+        $scope.title = "Searched for: " + $scope.search
+      })
+  }
+
+  // call favorite picture on link click
+
+  // call like picture on link click
+
+  // call unlike picture on link click
+
+  // call show favorited pictures on link click
+
+
+
+  // this function allows searching with keyup (NOT USING IT TO AVOID EXCESS API CALLS)
+  // $scope.$watch("search", function(newValue, oldValue) {
+  //   if ($scope.search.length > 3) {
+  //     pictures.searchPictures($scope.search)
+  //       .then(function(pictures) {
+  //         $scope.pics = JSON.parse(pictures);
+  //       })
+  //   }
+  // })
+})
+
+// directive to handle enter event
+App.directive('ngEnter', function() {
+  return function(scope, element, attrs) {
+    element.bind("keydown keypress", function(event) {
+      if(event.which === 13) {
+        scope.$apply(function() {
+          scope.$eval(attrs.ngEnter, {'event':event});
+        })
+      event.preventDefault();
+      }
     })
-    // .controller("NewContactController", function($scope, $location, Pictures) {
-    //     $scope.back = function() {
-    //         $location.path("#/");
-    //     }
-    //
-    //     $scope.saveContact = function(contact) {
-    //         Pictures.createContact(contact).then(function(doc) {
-    //             var contactUrl = "/contact/" + doc.data._id;
-    //             $location.path(contactUrl);
-    //         }, function(response) {
-    //             alert(response);
-    //         });
-    //     }
-    // })
-    // .controller("EditContactController", function($scope, $routeParams, Pictures) {
-    //     Pictures.getContact($routeParams.contactId).then(function(doc) {
-    //         $scope.contact = doc.data;
-    //     }, function(response) {
-    //         alert(response);
-    //     });
-    //
-    //     $scope.toggleEdit = function() {
-    //         $scope.editMode = true;
-    //         $scope.contactFormUrl = "contact-form.html";
-    //     }
-    //
-    //     $scope.back = function() {
-    //         $scope.editMode = false;
-    //         $scope.contactFormUrl = "";
-    //     }
-    //
-    //     $scope.saveContact = function(contact) {
-    //         Pictures.editContact(contact);
-    //         $scope.editMode = false;
-    //         $scope.contactFormUrl = "";
-    //     }
-    //
-    //     $scope.deleteContact = function(contactId) {
-    //         Pictures.deleteContact(contactId);
-    //     }
-    // });
+  }
+})

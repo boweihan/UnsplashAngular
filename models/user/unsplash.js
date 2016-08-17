@@ -36,7 +36,8 @@ function getBearerToken(code, userId) {
 }
 
 function searchPictures(req, res, next) {
-  request.get("https://api.unsplash.com/photos/search?client_id="+ unsplashCred.applicationId + "&page=1&query=" + "apple" + "&bearer_token=" + req.user.token, function (error, response, body) {
+  console.log(req.query.search);
+  request.get("https://api.unsplash.com/photos/search?client_id="+ unsplashCred.applicationId + "&page=1&per_page=50&query=" + req.query.search + "&bearer_token=" + req.user.token, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       res.json({
         status: 'success',
@@ -51,7 +52,7 @@ function searchPictures(req, res, next) {
 
 function getCuratedPictures(req, res, next) {
   console.log(req.user.token);
-  request.get("https://api.unsplash.com/photos/curated?client_id="+ unsplashCred.applicationId + "&page=1&bearer_token=" + req.user.token, function (error, response, body) {
+  request.get("https://api.unsplash.com/photos/curated?client_id="+ unsplashCred.applicationId + "&page=1&per_page=50&bearer_token=" + req.user.token, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       res.json({
         status: 'success',
@@ -91,7 +92,7 @@ function unLikePicture(req, res, next) {
 }
 
 function getLikedPictures(req, res, next) {
-  request.get("https://api.unsplash.com/users/" + req.user.username + "/likes?client_id="+ unsplashCred.applicationId + "&bearer_token=" + req.user.token + "&page=1", function (error, response, body) {
+  request.get("https://api.unsplash.com/users/" + req.user.username + "/likes?client_id="+ unsplashCred.applicationId + "&bearer_token=" + req.user.token + "&page=1&per_page=50", function (error, response, body) {
     if (!error && response.statusCode == 200) {
       res.json({
         status: 'success',
@@ -104,6 +105,35 @@ function getLikedPictures(req, res, next) {
   });
 }
 
+function favoritePicture(req, res, next) {
+  db.none('insert into pics (img, user_id)' + 'values ($1, $2)', [req.query.image, req.user.id])
+    .then(function () {
+      res.status(200)
+        .json({
+          status: 'success',
+          message: 'favorited picture'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
+function showFavoritedPictures(req, res, next) {
+  db.any('select * from pics where user_id='+req.user.id)
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'retrieved all pictures'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
 
 module.exports = {
   getBearerToken: getBearerToken,
@@ -112,5 +142,7 @@ module.exports = {
   likePicture: likePicture,
   unLikePicture: unLikePicture,
   getLikedPictures: getLikedPictures,
-  getUserName: getUserName
+  getUserName: getUserName,
+  favoritePicture: favoritePicture,
+  showFavoritedPictures: showFavoritedPictures
 }

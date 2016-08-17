@@ -1,10 +1,13 @@
 module.exports = function(app, passport, db, unsplash) {
+    app.get('/api/test', isLoggedIn, db.getAllPictures);
 // picture routes
   app.get('/api/curated', isLoggedIn, unsplash.getCuratedPictures);
   app.get('/api/pictures', isLoggedIn, unsplash.searchPictures);
   app.get('/api/pictures/like', isLoggedIn, unsplash.likePicture);
   app.get('/api/pictures/unlike', isLoggedIn, unsplash.unLikePicture);
   app.get('/api/liked', isLoggedIn, unsplash.getLikedPictures);
+  app.get('/api/pictures/favorite', isLoggedIn, unsplash.favoritePicture);
+  app.get('/api/favorited', isLoggedIn, unsplash.showFavoritedPictures);
   // app.post('/api/pictures', isLoggedIn, db.createPicture);
   // app.put('/api/pictures/:id', isLoggedIn, db.updatePicture);
   // app.delete('/api/pictures/:id', isLoggedIn, db.removePicture);

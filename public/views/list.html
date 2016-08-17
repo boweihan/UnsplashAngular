@@ -1,26 +1,30 @@
-<!-- <div class = "row">
-  <div class="col-md-6">
-    <h2>
-      Contacts
-    </h2>
+<div ng-controller="ListController">
+
+  <!-- search bar that calls updateSearch() and updates $scope.search on 'enter' keypress -->
+  <div class='navbar navbar-default' id='nav'>
+    <input placeholder="search" ng-enter=updateSearch() ng-model=search></input>
   </div>
-  <div class="col-md-3">
-  </div>
-  <div class="col-md-2">
-    <a style="margin-top:20px" class="btn btn-default" href="#/new/contact">New</a>
-  </div>
-  <div class="col-md-1">
+
+  <!-- two way binding on title to display search terms -->
+  <h1>
+    {{title}}<br>
+    <a id='favorite'>View Favorites</a>
+  </h1>
+
+
+  <p>If search isn't working, click <strong><a href='https://unsplash.com/oauth/authorize?client_id=78cd46cc136d378fcd53b6f3a7754591387e38d78dccfa52bf3563999447df99&redirect_uri=http://localhost:8080/sloogle&response_type=code&scope=public+read_user+write_user+read_photos+write_photos+write_likes+read_collections+write_collections'>here</a></strong> to connect to unsplash</p>
+
+  <!-- apply angular ng-repeat method to iterate over JSON parsed object -->
+  <div ng-repeat="pic in pics">
+
+    <!-- apply a clearfix to every row to combat problems with varying image heights -->
+    <div class="clearfix" ng-if="$index % 4 == 0"></div>
+
+    <!-- display image with responsive grid -->
+    <div id='imageElement'>
+      <img class="col-sm-3 img-responsive" id='img'src='{{pic.urls.regular}}'/>
+      <span>Favorite</span>
+    </div>
+
   </div>
 </div>
-<div class="container">
-  <table class="table table-hover">
-    <tbody>
-      <tr ng-repeat="contact in contacts | orderBy:'lastName'" style="cursor:pointer">
-        <td>
-          <a ng-href="#/contact/{{pictures._id}}">{{ pictures }}</a>
-        </td>
-      </tr>
-    </tbody>
-  </table> -->
-
-<div>wtfffFFF IS GOING ON HERE</div>
