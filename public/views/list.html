@@ -8,9 +8,12 @@
   <!-- two way binding on title to display search terms -->
   <h1>
     {{title}}<br>
-    <a id='favorite' ng-click="showFavorites()">View Favorites</a>
+    <a id='favorite' ng-click="showHome()">Home</a> |
+    <a id='favorite' ng-click="showFavorites()">Favorites</a>
   </h1>
 
+  <!-- flash messages with css -->
+  <div id='flash'>{{flash}}</div>
 
   <p>If search isn't working, click <strong><a href='https://unsplash.com/oauth/authorize?client_id=78cd46cc136d378fcd53b6f3a7754591387e38d78dccfa52bf3563999447df99&redirect_uri=http://localhost:8080/sloogle&response_type=code&scope=public+read_user+write_user+read_photos+write_photos+write_likes+read_collections+write_collections'>here</a></strong> to connect to unsplash</p>
 
@@ -18,12 +21,24 @@
   <div ng-repeat="pic in pics">
 
     <!-- apply a clearfix to every row to combat problems with varying image heights -->
-    <!-- <div class="clearfix" ng-if="$index % 4 == 0"></div> -->
+    <div class="clearfix" ng-if="$index % 3 == 0"></div>
 
     <!-- display image with responsive grid -->
     <div id='imageElement'>
-      <img class="col-sm-3 img-responsive" id='img'src='{{pic.urls.regular}}'/>
-      <a ng-click="favorite({{pic.urls.regular}})">Favorite</a>
+      <div class="col-sm-4">
+        <a href='{{pic.urls.regular}}' download="{{pic.urls.regular}}"><img class="img-responsive" id='img'src='{{pic.urls.regular}}'/></a>
+        <button class="favoriteImg" id="fav{{pic.id}}" ng-click="favorite(pic.urls.regular, pic.id)" ng-if="pic.likes">Favorite</button>
+
+        <!-- display like or unlike based on pic data -->
+        <button class="likeImg" id="like{{pic.id}}" ng-click="like(pic.id)" ng-if="!pic.liked_by_user && pic.likes">Like</button>
+        <button class="likeImg" id="unlike{{pic.id}}" ng-click="unlike(pic.id)" ng-if="pic.liked_by_user  && pic.likes">Unlike</button>
+
+        <!-- <button id=likeImg><a href='{{pic.urls.regular}}' download="{{pic.urls.regular}}">Download</a></button> -->
+
+        <!-- use pic id class to update likes (currently not functional) -->
+        <img ng-if="pic.likes" id='heart' src='http://www.endlessicons.com/wp-content/uploads/2013/06/heart-icon-614x460.png'/>
+        <div class='{{pic.id}}' id='likesDiv' ng-if="pic.likes">{{pic.likes}}</div>
+      </div>
     </div>
 
   </div>

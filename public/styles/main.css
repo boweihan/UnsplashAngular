@@ -58,4 +58,69 @@ span {
 
 #favorite {
   font-size: 0.5em;
+  cursor: pointer;
+}
+.favoriteImg {
+  float: right;
+  text-align: center;
+  margin: 0;
+  margin-top: 2px;
+  color: black;
+  font-weight: bold;
+  padding: 0 5px;
+  border: 2px solid black;
+  border-radius: 5px;
+  position: relative;
+  background: none;
+}
+.favoriteImg:hover {
+  background-color: black;
+  color: white;
+}
+
+.likeImg {
+  float: right;
+  text-align: center;
+  margin:0;
+  margin-top: 2px;
+  margin-right: 5px;
+  color: black;
+  font-weight: bold;
+  padding: 0 5px;
+  border: 2px solid black;
+  border-radius: 5px;
+  position: relative;
+  background: none;
+}
+.likeImg:hover {
+  background-color: black;
+  color: white;
+}
+
+#likesDiv {
+  float: left;
+  text-align: left;
+  padding: 0 5px;
+  font-weight: bold;
+  height:30px;
+  line-height: 30px;
+}
+
+#heart {
+  float: left;
+  height: 30px;
+  width: 30px;
+  position: relative;
+  z-index: 1000;
+}
+
+.col-sm-3 {
+  margin-top: 5%;
+}
+
+#flash {
+  text-align: center;
+  color: red;
+  font-weight: bold;
+  text-transform: uppercase;
 }

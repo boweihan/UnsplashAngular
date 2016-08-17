@@ -24,7 +24,7 @@ var unsplashCred = {
 // get user name to use in API calls (called automatically after getting bearer token)
 function getUserName(token, userId) {
   request.get("https://api.unsplash.com/me?client_id=" + unsplashCred.applicationId + "&bearer_token=" + token, function (error, response, body) {
-    db.none('update users set username=$1 where id=$2', [(JSON.parse(body)).username, userId])
+    db.none('UPDATE users SET username=$1 WHERE id=$2;', [(JSON.parse(body)).username, userId])
       .then(function () {
         console.log('username: ' + JSON.parse(body).username + ', added to user: ' + userId)
       })
@@ -34,7 +34,7 @@ function getUserName(token, userId) {
 // get bearer token right after logging in
 function getBearerToken(code, userId) {
   request.post("https://unsplash.com/oauth/token?client_id=" + unsplashCred.applicationId + "&client_secret=" + unsplashCred.secret + "&redirect_uri=" + unsplashCred.callbackUrl + "&code=" + code + "&grant_type=authorization_code", function (error, response, body) {
-    db.none('update users set token=$1 where id=$2', [(JSON.parse(response.body)).access_token, userId])
+    db.none('UPDATE users SET token=$1 WHERE id=$2', [(JSON.parse(response.body)).access_token, userId])
       .then(function () {
         console.log(JSON.parse(response.body));
         console.log('token:' + JSON.parse(response.body).access_token + ', added to user: ' + userId);
@@ -78,14 +78,10 @@ function getCuratedPictures(req, res, next) {
 // API call to unsplash to like a picture for a user
 function likePicture(req, res, next) {
   request.post("https://api.unsplash.com/photos/"+req.query.id+"/like?client_id="+ unsplashCred.applicationId + "&bearer_token=" + req.user.token, function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-      res.json({
-        status: 'success',
-        message: 'you liked a picture!'
-      });
-    } else {
-      console.log("request to unsplash.likePicture failed!");
-    }
+    res.json({
+      status: 'success',
+      message: 'you liked a picture!'
+    })
   });
 }
 
@@ -121,30 +117,35 @@ function getLikedPictures(req, res, next) {
 
 // database query to insert a favorited picture into the database
 function favoritePicture(req, res, next) {
-  console.log('favoriting picture');
-  db.none('insert into pics (img, user_id)' + 'values ($1, $2)', [req.query.image, req.user.id])
-    .then(function () {
-      res.status(200)
-        .json({
-          status: 'success',
-          message: 'favorited picture'
-        });
+  db.result("SELECT EXISTS (SELECT * FROM pics WHERE pics.urls=$1 AND pics.user_id=$2);", [req.query.image, parseInt(req.user.id)])
+    .then(function(result) {
+      var exists = result.rows[0].exists;
+      if (exists) {
+        return "that picture already exists";
+      } else {
+        console.log('added picture');
+        db.none('INSERT INTO pics (urls, user_id)' + 'VALUES ($1, $2);', [req.query.image, req.user.id])
+          .then(function () {
+            res.status(200)
+              .json({
+                status: 'success',
+                message: 'favorited picture'
+              });
+          })
+      }
     })
-    .catch(function (err) {
-      return next(err);
-    });
 }
 
 // database query to show all favorited (i.e. saved) images
 function showFavoritedPictures(req, res, next) {
   console.log('showing favorited pictures');
-  db.any('select * from pics where user_id='+req.user.id)
+  db.any('SELECT * FROM pics WHERE user_id=$1;', [req.user.id])
     .then(function (data) {
       res.status(200)
         .json({
           status: 'success',
           data: data,
-          message: 'retrieved all pictures'
+          message: 'retrieved all pictures from user: '+req.user.id
         });
     })
     .catch(function (err) {

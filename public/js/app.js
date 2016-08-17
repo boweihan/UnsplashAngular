@@ -60,6 +60,7 @@ App.factory('pictures', ['$http', function($http) {
           }
         )
     },
+    // converting url to useable format (object)
     favoritePicture: function(url) {
       return $http.get("/api/pictures/favorite?image="+url)
         .then(
@@ -75,7 +76,8 @@ App.factory('pictures', ['$http', function($http) {
       return $http.get("/api/favorited")
         .then(
           function(response) {
-            return response.data.data
+            console.log(response);
+            return response.data.data;
           },
           function(errResponse) {
             console.log("error while showing favorite pictures from app.js")
@@ -88,7 +90,8 @@ App.factory('pictures', ['$http', function($http) {
 App.controller("ListController", function(pictures, $scope) {
   // set initial scopes
   $scope.search = "";
-  $scope.title = "Curated Pictures";
+  $scope.title = "Sloogle Images";
+  $scope.flash = "";
 
   // get all pictures on page load
   pictures.getPictures()
@@ -107,32 +110,106 @@ App.controller("ListController", function(pictures, $scope) {
     pictures.searchPictures($scope.search)
       .then(function(pictures) {
         $scope.pics = JSON.parse(pictures);
-        $scope.title = "Searched for: " + $scope.search
+        $scope.flash = "Searched for: " + $scope.search;
       })
   }
 
-  // call favorite picture on link click
+  // show all favorites on link click
   $scope.showFavorites = function() {
     pictures.showFavoritedPictures()
       .then(function(pictures) {
-        $scope.pics = JSON.parse(pictures);
-        $scope.title = "Showing: Favorites"
+        // map object to the same form as unsplash, for easy use
+        var array = [];
+        for(i=0;i<pictures.length;i++) {
+          console.log(pictures[i].urls);
+          array.push({"urls":{"regular":pictures[i].urls}});
+        }
+        $scope.pics = array;
+        $scope.flash = "showing: Favorites";
       })
   }
 
-  // call like picture on link click
-  $scope.favorite = function(url) {
+  // favorite an image
+  $scope.favorite = function(url, id) {
     pictures.favoritePicture(url)
       .then(function(pictures) {
-        $scope.title = $scope.title + "thanks for favoriting a picture"
+        $scope.flash = "Picture favorited"
+        $('#fav'+id).text('Favorited');
       })
   }
 
-  // call unlike picture on link click
+  // like an image
+  $scope.like = function(imageId) {
+    pictures.likePicture(imageId)
+      .then(function(response) {
+        $scope.flash = "Picture liked"
+        $('#like'+imageId).text('Liked');
+      })
 
-  // call show favorited pictures on link click
+    // function that refreshes page when liking for dynamic updating
+    if ($scope.search === "") {
+      pictures.getPictures()
+        .then(function(pictures) {
+          pics = JSON.parse(pictures);
+          for(i=0;i<pics.length;i++) {
+            if (pics[i] === undefined) {
+              pictures.splice(i, 1);
+            }
+          }
+            $scope.pics = pics
+        })
+    } else {
+      pictures.searchPictures($scope.search)
+        .then(function(pictures) {
+          $scope.pics = JSON.parse(pictures);
+          $scope.flash = "Searched for: " + $scope.search;
+        })
+    }
+  }
 
+  // unlike an image
+  $scope.unlike = function(imageId) {
+    pictures.unLikePicture(imageId)
+      .then(function(response) {
+        $scope.flash = "Picture unliked"
+        $('#unlike'+imageId).text('Unliked');
+      })
 
+    // function that refreshes page when liking for dynamic updating
+    if ($scope.search === "") {
+      pictures.getPictures()
+        .then(function(pictures) {
+          pics = JSON.parse(pictures);
+          for(i=0;i<pics.length;i++) {
+            if (pics[i] === undefined) {
+              pictures.splice(i, 1);
+            }
+          }
+            $scope.pics = pics
+        })
+    } else {
+      pictures.searchPictures($scope.search)
+        .then(function(pictures) {
+          $scope.pics = JSON.parse(pictures);
+          $scope.flash = "Searched for: " + $scope.search;
+        })
+    }
+
+  }
+
+  // home button
+  $scope.showHome = function() {
+    pictures.getPictures()
+      .then(function(pictures) {
+        pics = JSON.parse(pictures);
+        for(i=0;i<pics.length;i++) {
+          if (pics[i] === undefined) {
+            pictures.splice(i, 1);
+          }
+        }
+        $scope.pics = pics
+      })
+  }
 
   // this function allows searching with keyup (NOT USING IT TO AVOID EXCESS API CALLS)
   // $scope.$watch("search", function(newValue, oldValue) {
