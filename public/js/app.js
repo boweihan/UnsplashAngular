@@ -4,12 +4,12 @@ var App = angular.module('root', ['ngRoute']);
 // provide angular routes, for this app we'll just use the one /sloogle
 App.config(function($routeProvider) {
   $routeProvider
-    .when('/', {
+    .when('/sloogle', {
           templateUrl: "/public/views/list.html",
           controller: "ListController",
     })
     .otherwise({
-      redirectTo: '/'
+      redirectTo: '/sloogle'
     })
 });
 
