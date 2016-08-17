@@ -18,7 +18,7 @@ var unsplashCred = {
   applicationId: "78cd46cc136d378fcd53b6f3a7754591387e38d78dccfa52bf3563999447df99",
   secret: "0aa60887488aa8264bb73f0b75a5f0a41cc3cd28da67ed36e15363f7047b6f76",
   bearer: "",
-  callbackUrl: "http://localhost:8080/sloogle"
+  callbackUrl: "http://sloogle.herokuapp.com/sloogle"
 }
 
 // get user name to use in API calls (called automatically after getting bearer token)
