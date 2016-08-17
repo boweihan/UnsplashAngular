@@ -21,7 +21,7 @@ module.exports = function(app, passport, db, unsplash) {
   app.get('/sloogle', isLoggedIn, function(req, res) {
     if (req.query.code) {
       unsplash.getBearerToken(req.query.code, req.user.id);
-      // res.redirect('/sloogle');
+      res.redirect('/sloogle');
     }
     res.sendFile(__dirname + '/public/views/sloogle.html');
   });
