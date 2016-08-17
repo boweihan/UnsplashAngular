@@ -106,6 +106,7 @@ function getLikedPictures(req, res, next) {
 }
 
 function favoritePicture(req, res, next) {
+  console.log('favoriting picture');
   db.none('insert into pics (img, user_id)' + 'values ($1, $2)', [req.query.image, req.user.id])
     .then(function () {
       res.status(200)

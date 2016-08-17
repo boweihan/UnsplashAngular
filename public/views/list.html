@@ -18,12 +18,12 @@
   <div ng-repeat="pic in pics">
 
     <!-- apply a clearfix to every row to combat problems with varying image heights -->
-    <div class="clearfix" ng-if="$index % 4 == 0"></div>
+    <!-- <div class="clearfix" ng-if="$index % 4 == 0"></div> -->
 
     <!-- display image with responsive grid -->
     <div id='imageElement'>
       <img class="col-sm-3 img-responsive" id='img'src='{{pic.urls.regular}}'/>
-      <span>Favorite</span>
+      <a ng-click="favorite({{pic.urls.regular}})">Favorite</a>
     </div>
 
   </div>

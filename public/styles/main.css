@@ -46,7 +46,7 @@ p {
 }
 
 span {
-  display: none;
+  display: block;
   position: absolute;
   color: white;
   padding: 10px;

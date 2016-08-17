@@ -119,6 +119,13 @@ App.controller("ListController", function(pictures, $scope) {
       })
   }
 
+  $scope.favorite = function(url) {
+    pictures.favoritePicture(url)
+      .then(function(pictures) {
+        $scope.title = $scope.title + "thanks for favoriting a picture"
+      })
+  }
+
   // call favorite picture on link click
 
   // call like picture on link click
